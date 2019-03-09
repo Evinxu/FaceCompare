@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>source/shunshizhen.ico</file>
+        <file>source/beijing.ico</file>
+    </qresource>
+</RCC>
