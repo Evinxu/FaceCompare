@@ -237,8 +237,8 @@ void mainwidget::StartSlot()
             ui->RoiLabel->setPixmap(*pixmap);
         }
 
-        QString Apikey("JcY_4jqgtDjof78Z3WPBGytvGfqsO2Xh"); /*在face++网站申请*/
-        QString APISecret("0A_2so6KV1mgnAp5_-FMrl6SpFVXz_gH"); /*在face++网站申请*/
+        QString Apikey(""); /*在face++网站申请*/
+        QString APISecret(""); /*在face++网站申请*/
 
         //初始化消息体
         QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
