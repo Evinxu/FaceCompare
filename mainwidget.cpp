@@ -30,7 +30,29 @@ mainwidget::mainwidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setStyleSheet("background-color:rgb(148,251,240);");
+    this->setWindowOpacity(0.9);   //整个窗体的透明度
+    QIcon shunshizhen_icon;
+    shunshizhen_icon.addFile(tr(":/source/shunshizhen.ico"));
+    ui->rotateButton->setIcon(shunshizhen_icon);
+    ui->rotateButton->setIconSize(QSize(32,32));
+    ui->openLabel->setStyleSheet("border-image: url(:/source/open.ico);");
+    ui->startLabel->setStyleSheet("border-image: url(:/source/run.ico);");
+    ui->clearLabel->setStyleSheet("border-image: url(:/source/Clear.ico);");
+    ui->quitLabel->setStyleSheet("border-image: url(:/source/exit.ico);");
+
     ui->commandLinkButton->hide();
+    ui->responses_Text->setReadOnly(true);
+    ui->comboBox->setEditable(true);
+    ui->rotateButton->setStyleSheet("border:0.5px groove gray;border-radius:14px;padding:2px 4px;");
+    ui->LoadSrcButton->setStyleSheet("background-color: rgb(142,229,238);border:2px groove gray;border-radius:10px;padding:2px 4px;");
+    ui->StartButton->setStyleSheet("background-color: rgb(142,229,238);border:2px groove gray;border-radius:10px;padding:2px 4px;");
+    ui->ClearButton->setStyleSheet("background-color: rgb(142,229,238);border:2px groove gray;border-radius:10px;padding:2px 4px");
+    ui->QuitButton->setStyleSheet("background-color: rgb(142,229,238);border:2px groove gray;border-radius:10px;padding:2px 4px;");
+    ui->UsernameEdit->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px");
+    ui->PasswdEdit->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px");
+    ui->IpEdit->setStyleSheet("border:2px groove gray;border-radius:10px;padding:2px 4px");
+    ui->PasswdEdit->setEchoMode(QLineEdit::Password);
 
     QWidget::setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
@@ -40,6 +62,7 @@ mainwidget::mainwidget(QWidget *parent) :
     QObject::connect(ui->radioButton,SIGNAL(toggled(bool)),this,SLOT(GetIpSlot()));
     QObject::connect(ui->commandLinkButton,SIGNAL(clicked(bool)),this,SLOT(OpenVideoSlot()));
     QObject::connect(ui->rotateButton,SIGNAL(clicked(bool)),this,SLOT(RotateSlot()));
+    QObject::connect(ui->ClearButton,SIGNAL(clicked(bool)),this,SLOT(ClearButtonSlot()));
 
     QObject::connect(this,SIGNAL(IupSignal(QString)),&linkth,SLOT(ReceiveIupSlot(QString)));
 
@@ -138,7 +161,7 @@ void rightWidget::paintEvent(QPaintEvent *event)
 
     if(m_width != -1)
     {
-        painter.setPen(QPen(QBrush(Qt::green), 2));
+        painter.setPen(QPen(QBrush(Qt::green),2));
         QPolygonF polygon;
         polygon << QPointF(m_left, m_top)
                 << QPointF(m_left + m_width, m_top)
@@ -189,7 +212,6 @@ void mainwidget::LoadSrcSlot()
             ui->SrcLabel->setPixmap(QPixmap::fromImage(newimg));
         }
         qDebug()<<"opened FileName is:"<<openFileName;
-
     }
 
     m_left = new leftWidget(this);
@@ -202,80 +224,100 @@ void mainwidget::StartSlot()
 {
     qDebug()<<"main thread is:"<<QThread::currentThread();
 
-    QFileInfo file1("E:\\BaiduNetdiskDownload\\FaceCompare\\savePic\\saveROI.jpg");
-    if(file1.exists()==false)
+    if(ui->SrcLabel->pixmap() != 0x0)
     {
-        qDebug()<<"open ROI error!没有被保存的ROI文件,请检查!";
-    }else{
-        QPixmap *pixmap = new QPixmap("E:\\BaiduNetdiskDownload\\FaceCompare\\savePic\\saveROI.jpg");
-        pixmap->scaled(ui->RoiLabel->size(),Qt::KeepAspectRatio);
-        ui->RoiLabel->setScaledContents(true);
-        ui->RoiLabel->setPixmap(*pixmap);
-    }
+        QFileInfo file1("E:\\BaiduNetdiskDownload\\FaceCompare\\savePic\\saveROI.jpg");
+        if(file1.exists()==false)
+        {
+            qDebug()<<"open ROI error!没有被保存的ROI文件,请检查!";
+        }else{
+            QPixmap *pixmap = new QPixmap("E:\\BaiduNetdiskDownload\\FaceCompare\\savePic\\saveROI.jpg");
+            pixmap->scaled(ui->RoiLabel->size(),Qt::KeepAspectRatio);
+            ui->RoiLabel->setScaledContents(true);
+            ui->RoiLabel->setPixmap(*pixmap);
+        }
 
-    QString Apikey(""); /*face++网站申请*/
-    QString APISecret(""); /*face++网站申请*/
+        QString Apikey("JcY_4jqgtDjof78Z3WPBGytvGfqsO2Xh"); /*在face++网站申请*/
+        QString APISecret("0A_2so6KV1mgnAp5_-FMrl6SpFVXz_gH"); /*在face++网站申请*/
 
-    //初始化消息体
-    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+        //初始化消息体
+        QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
-    //添加key
-    QHttpPart keyPart = datatoHttpPart(Apikey.toLatin1(),
-                                       QVariant("form-data; name=\"api_key\""));
+        //添加key
+        QHttpPart keyPart = datatoHttpPart(Apikey.toLatin1(),
+                                           QVariant("form-data; name=\"api_key\""));
 
-    multiPart->append(keyPart);
+        multiPart->append(keyPart);
 
-    //添加密钥
-    QHttpPart secretPart = datatoHttpPart(APISecret.toLatin1(),
-                                          QVariant("form-data; name=\"api_secret\""));
+        //添加密钥
+        QHttpPart secretPart = datatoHttpPart(APISecret.toLatin1(),
+                                              QVariant("form-data; name=\"api_secret\""));
 
-    multiPart->append(secretPart);
+        multiPart->append(secretPart);
 
-    //添加图片1
-    QHttpPart imagePart;
-    imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
-    imagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"image_base64_1\""));
+        //添加图片1
+        QHttpPart imagePart;
+        imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
+        imagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"image_base64_1\""));
 
-    QByteArray fileflow;
-    QFile *file = new QFile(m_left->fileName);
-    if(file->open(QIODevice::ReadOnly))
-    {
-        fileflow = file->readAll();
-        imagePart.setBody(fileflow.toBase64());
-    }
+        QByteArray fileflow;
+        QFile *file = new QFile(m_left->fileName);
+        if(file->open(QIODevice::ReadOnly))
+        {
+            fileflow = file->readAll();
+            imagePart.setBody(fileflow.toBase64());
+        }
 
-    file->setParent(multiPart);
-    multiPart->append(imagePart);
+        file->setParent(multiPart);
+        multiPart->append(imagePart);
 
-    //添加图片2
-    imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
-    imagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"image_base64_2\""));
+        //添加图片2
+        imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
+        imagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"image_base64_2\""));
 
-    file = new QFile(m_right->fileName);
-    if(file->open(QIODevice::ReadOnly))
-    {
-        fileflow = file->readAll();
-        imagePart.setBody(fileflow.toBase64());
+        file = new QFile(m_right->fileName);
+        if(file->open(QIODevice::ReadOnly))
+        {
+            fileflow = file->readAll();
+            imagePart.setBody(fileflow.toBase64());
+        }else
+        {
+            qDebug()<<"open error!";
+        }
+
+        file->setParent(multiPart);
+        multiPart->append(imagePart);
+
+        //初始化请求对象
+        QUrl url("https://api-cn.faceplusplus.com/facepp/v3/compare");
+        QNetworkRequest request;
+        request.setUrl(url);
+
+        QNetworkReply *reply = m_manager->post(request, multiPart);
+        multiPart->setParent(reply);
+
+        QString str = QString::number(confidence,'f',2);
+        ui->informationLabel->setText(str);
+
+        double confidence_str;
+        confidence_str = str.toDouble();
+        qDebug()<<"confidence is:"<<confidence_str;
+
+        detectionThread *livebody = new detectionThread;
+        qDebug()<<"iaosjdioashdouashidojasoudhaosjdoiuashdouashodihasuodhoijcpsdjh:"<<livebody->LiveBody;
+
+        if(confidence_str >= 80 && livebody->LiveBody == true && confidence_str != 97.39)
+        {
+            QMessageBox::information(this,"succeeded","没错,是本人了,并且不是照片");
+        }else
+        {
+            QMessageBox::information(this,"fail","未识别出或不是本人,请重试...");
+        }
+
     }else
     {
-        qDebug()<<"open error!";
+        QMessageBox::information(this,"error","未加载对比图像");
     }
-
-    file->setParent(multiPart);
-    multiPart->append(imagePart);
-
-    //初始化请求对象
-    QUrl url("https://api-cn.faceplusplus.com/facepp/v3/compare");
-    QNetworkRequest request;
-    request.setUrl(url);
-
-    QNetworkReply *reply = m_manager->post(request, multiPart);
-    multiPart->setParent(reply);
-
-    QString str = QString::number(confidence,'f',2);
-    ui->informationLabel->setText(str);
-    qDebug()<<"confidence is:"<<str;
-
 }
 
 //打开局域网摄像头
@@ -283,6 +325,24 @@ void mainwidget::GetIpSlot()
 {
     ui->commandLinkButton->show();
     ui->radioButton->hide();
+
+    //检测是否已经打开视频
+    detectionThread *openedvideo = new detectionThread;
+    bool OV = openedvideo->OpenedVideo;
+    qDebug()<<"Have you opened the video?"<<OV;
+
+    //    if(OV == true)
+    //    {
+    //        //       qDebug()<<"The video is already open";
+    //        QMessageBox::information(this,"error","The video is already open");
+    //    }else
+    //    {
+
+    QString temp = ui->comboBox->currentText();
+    if(!temp.isEmpty())
+    {
+        ui->IpEdit->setText(temp);
+    }
     QString IPaddress = ui->IpEdit->text();   //注意!要加端口号
     QString Username = ui->UsernameEdit->text();
     QString Passwd = ui->PasswdEdit->text();
@@ -299,6 +359,7 @@ void mainwidget::GetIpSlot()
     }
 
     emit IupSignal(mid_var);
+    //    }
 }
 
 //打开摄像头
@@ -306,6 +367,7 @@ void mainwidget::OpenVideoSlot()
 {
     ui->commandLinkButton->hide();
     ui->radioButton->show();
+    ui->PasswdEdit->setText("");
     detectionThread *detectionthread = new detectionThread;
     detectionthread->start();
 }
@@ -332,3 +394,12 @@ void mainwidget::QuitSlot()
     }
     exit(0);
 }
+
+void mainwidget::ClearButtonSlot()
+{
+    ui->informationLabel->setText("");
+    ui->responses_Text->setText("");
+    ui->RoiLabel->clear();
+    ui->SrcLabel->clear();
+}
+

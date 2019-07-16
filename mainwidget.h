@@ -72,7 +72,7 @@ public:
     explicit mainwidget(QWidget *parent = 0);
     ~mainwidget();
 
-    float confidence;
+    float confidence = 0.000;
 
     QImage newimg;
 
@@ -84,16 +84,13 @@ protected:
 private slots:
 
     void LoadSrcSlot();
-
     void StartSlot();
-
     void QuitSlot();
-
     void GetIpSlot();
+    void RotateSlot();
+    void ClearButtonSlot();
 
     void OpenVideoSlot();
-
-    void RotateSlot();
 
     void finished(QNetworkReply *reply);
 

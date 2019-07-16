@@ -2,5 +2,11 @@
     <qresource prefix="/">
         <file>source/shunshizhen.ico</file>
         <file>source/beijing.ico</file>
+        <file>source/logo1.ico</file>
+        <file>source/logo2.ico</file>
+        <file>source/Clear.ico</file>
+        <file>source/exit.ico</file>
+        <file>source/open.ico</file>
+        <file>source/run.ico</file>
     </qresource>
 </RCC>

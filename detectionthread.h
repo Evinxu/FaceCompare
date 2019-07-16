@@ -35,6 +35,12 @@ public:
 
     QString iup;
 
+    bool LiveBody;
+
+    int isLive;
+
+    bool OpenedVideo;
+
 signals:
     void detectionchange(QString);
 
